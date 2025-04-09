@@ -6,7 +6,7 @@ import { Colors } from '../../constants/colors';
 import { getAddress, getMapPreview } from '../../util/location';
 import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
 
-function LocationPicker({onPickLocation}) {
+function LocationPicker({ onPickLocation }) {
 	const [locationPermissionInformation, requestPermission] = useForegroundPermissions();
 	const [pickedLocation, setPickedLocation] = useState();
 	const navigation = useNavigation();
@@ -14,26 +14,26 @@ function LocationPicker({onPickLocation}) {
 	const isFocused = useIsFocused();
 
 	useEffect(() => {
-		if(isFocused && route.params) {
-			const mapPickedLocation =  {
-				lat: route.params.pickedLat, 
-				lng: route.params.pickedLng
+		if (isFocused && route.params) {
+			const mapPickedLocation = {
+				lat: route.params.pickedLat,
+				lng: route.params.pickedLng,
 			};
 			setPickedLocation(mapPickedLocation);
 		}
-	},[route, isFocused]);
+	}, [route, isFocused]);
 
 	useEffect(() => {
 		async function handleLocation() {
-			if(pickedLocation) {
-				const address = await getAddress(
-					pickedLocation.lat, pickedLocation.lng
-				);
-				onPickLocation({...pickedLocation, address: address});
+			if (pickedLocation) {
+				console.log(pickedLocation, 'pickedLocation');
+				const address = await getAddress(pickedLocation.lat, pickedLocation.lng);
+				console.log(address, 'address');
+				onPickLocation({ ...pickedLocation, address: address });
 			}
 		}
 		handleLocation();
-	}, [pickedLocation, onPickLocation])
+	}, [pickedLocation, onPickLocation]);
 
 	async function verifyPermission() {
 		if (locationPermissionInformation.status === PermissionStatus.UNDETERMINED) {
@@ -54,12 +54,11 @@ function LocationPicker({onPickLocation}) {
 		}
 
 		const location = await getCurrentPositionAsync();
-		console.log(location);
+		console.log(location, 'location');
 		setPickedLocation({
 			lat: location.coords.latitude,
 			lng: location.coords.longitude,
 		});
-		
 	}
 
 	function pickOnMapHandler() {
